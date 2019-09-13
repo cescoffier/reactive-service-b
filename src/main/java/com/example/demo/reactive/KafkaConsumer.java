@@ -1,4 +1,4 @@
-package dev.appsody.starter;
+package com.example.demo.reactive;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -8,7 +8,7 @@ import org.eclipse.microprofile.reactive.messaging.Incoming;
 public class KafkaConsumer {
 
 
-    @Incoming("prices")
+//    @Incoming("prices")
     public void consume(int price) {
         System.out.println("2nd Consumer received: " + price + " @" + System.currentTimeMillis());
     }
