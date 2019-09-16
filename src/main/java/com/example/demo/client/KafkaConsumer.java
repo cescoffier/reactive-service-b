@@ -4,10 +4,11 @@ import com.example.demo.service.Database;
 import io.vertx.core.json.JsonObject;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
+import org.eclipse.microprofile.reactive.streams.operators.ProcessorBuilder;
+import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.concurrent.CompletionStage;
 
 @ApplicationScoped
 public class KafkaConsumer {
@@ -16,9 +17,12 @@ public class KafkaConsumer {
 
     @Incoming("input")
     @Outgoing("output")
-    public CompletionStage<JsonObject> process(JsonObject json) {
-        return database.transmogrify(json.getString("input"))
-                .thenApply(result -> toJson(json, result));
+    public ProcessorBuilder<JsonObject, JsonObject> process() {
+        return ReactiveStreams.<JsonObject>builder()
+                .map(json -> {
+                    String in = json.getString("input");
+                    return toJson(json, in);
+                });
     }
 
     private JsonObject toJson(JsonObject json, String result) {
